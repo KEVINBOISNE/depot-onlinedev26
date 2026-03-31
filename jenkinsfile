@@ -1,0 +1,22 @@
+pipeline {
+    agent any
+ 
+    stages {
+    stage('clean Workspace'){
+        steps{
+            cleanWs()
+        }
+    }
+ 
+ 
+        stage('clone git') {
+            steps {
+
+                    sh 'rm -rf depot_onlinedev26'
+                   sh 'git clone https://github.com/KEVINBOISNE/depot-onlinedev26.git'
+
+
+            }
+        }
+    }
+}
