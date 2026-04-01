@@ -1,37 +1,31 @@
-pipeline {
-agent any
-environment {
-IMG_NAME = 'med-nginx'
-DOCKER_REPO = 'build-image-docker'
-             }
-             stages {
-                 stage('cleanUp') {
-                     steps {
-                        deleteDir()
-                     }
-                  }
-                  stage('Checkout SCM') {
-                      steps {
-git branch: 'main', url: 'https://github.com/medsrc/build-image-docker.git'
-                      }
-                   }
-                   stage('build') {
-                       steps {
-                           script {
-sh 'docker build -t ${IMG_NAME} .'
-sh 'docker tag ${IMG_NAME} ${DOCKER_REPO}:${IMG_NAME}'
-                             }
-                        }
-                   }
 
-                  stage('deploiement conteneur') {
-                      steps {
-                           script {
-  sh 'docker stop monapp'
-  sh 'docker rm monapp'
-  sh 'docker run -d --name monapp --hostname monapp -p 8585:80 ${IMG_NAME}'
-                           }
-                      }
-                  }
+
+	
+
+pipeline {
+    agent any
+       stages {
+          stage('CleanUp de Workspace'){
+             steps {
+                cleanWs()
              }
-        }
+         }
+        stage('Cloner le GitHub'){
+           steps {
+                 git branch: 'main', url: 'https://github.com/srcmed/depotOnline26.git'
+            }
+         }
+           stage('install Docker'){
+              steps {
+                  sh 'sudo apt autoremove docker.io docker-compose -y'
+                  sh 'sudo apt update'
+                  sh 'sudo apt install apt-transport-https ca-certificates curl software-properties-common -y'
+                  sh 'sudo apt install docker.io -y'
+                  sh 'sudo apt update'
+                  sh 'sudo chmod 666 /var/run/docker.sock'
+                  sh 'sudo usermod -aG docker $USER'
+                  sh 'sudo systemctl restart docker.service'
+              }
+          }
+     }
+}
