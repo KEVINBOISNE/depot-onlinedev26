@@ -27,10 +27,12 @@ pipeline {
                   sh 'sudo systemctl restart docker.service'
               }
           }
-        stage('build') {
+        stage('build image docker') {
                 steps {
                         script {
-              sh 'docker build -t mynginx .'
+              sh 'docker docker rm "mynginx"'     
+              sh 'docker build -t "mynginx" .'
+              sh 'sudo docker image ls' 
                         }
               }
         }
